@@ -1,0 +1,26 @@
+.Nav {
+  background-color: rgba(66, 33, 102, 0.8);
+  color: white;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  display: flex;
+  justify-content: flex-start;
+  padding: 15px;
+}
+
+.Nav-item {
+  flex: 1 1 auto;
+}
+
+.user-info {
+  display: flex;
+  padding: 5px 10px;
+}
+
+.user-info.detail {
+  flex: 1;
+}
+
+.detail-number {
+  padding-left: .7em;
+}

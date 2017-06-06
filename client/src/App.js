@@ -1,0 +1,195 @@
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
+import {connect} from 'react-redux'
+import './App.css'
+import {getCountries, isLoading} from './ducks/api-requests'
+import {getSeconds, startCountdown, getStopTime} from './ducks/timer'
+import Nav from './components/Nav'
+import Button from './components/Button'
+import {
+  initiateRound,
+  getRounds,
+  getCurrentFlagCode,
+  chooseFlag
+} from './ducks/rounds'
+import RadioPads from './components/RadioPads'
+
+const renderCurrentMessage = (
+  seconds,
+  stoppedTime,
+  round
+) => {
+  const {active, isCorrect, flags} = round
+  const showWelcomeMessage = flags === 0 && !active
+  const showStartMessage = stoppedTime === null && active
+  const showSuccessMessage = stoppedTime > 0 && isCorrect
+  const showMistakeMessage = stoppedTime > 0 && !isCorrect
+
+  if (showWelcomeMessage) {
+    return (
+      <div className="messages-text">
+        Welcome. Ready to get vexed?
+      </div>
+    )
+  }
+  if (showStartMessage) {
+    return (
+      <div className="messages-text">
+        Time remaining: {seconds}
+      </div>
+    )
+  }
+  if (showSuccessMessage) {
+    return (
+      <div className="messages-text">
+        Good job! Answered in {10 - stoppedTime} {seconds === 1 ? 'second' : 'seconds'}
+      </div>
+    )
+  }
+  if (showMistakeMessage) {
+    return (
+      <div className="messages-text">
+        Wrong answer. Keep studying!
+      </div>
+    )
+  }
+  return <div className="messages-text">Oops, time expired</div>
+}
+
+class App extends Component {
+  componentDidMount() {
+    this.props.getCountries()
+  }
+
+  startRound = () =>
+    this.props.initiateRound(
+      this.props.countries.data,
+      this.props.rounds.level
+    )
+
+  handleSignIn = () => {}
+  handleSignOut = () => {}
+
+  handleSelection = value =>
+    this.props.chooseFlag({
+      isCorrect: value === this.props.currentFlag && this.props.seconds > 0,
+      remaining: this.props.seconds
+    })
+
+  render() {
+    const {
+      countries,
+      loading,
+      seconds,
+      currentFlag,
+      rounds,
+      stoppedAt
+    } = this.props
+
+    if (loading || !countries) {
+      return <div>...loading</div>
+    }
+
+    const getHourglass = () => {
+      if (seconds >= 7) {
+        return 'start'
+      } else if (seconds >= 4) {
+        return 'half'
+      }
+      return 'end'
+    }
+
+    return (
+      <div className="App">
+
+        <div className="App-header">
+          <i className="fa fa-flag-o" aria-hidden="true" />
+          <h1>Vexed</h1>
+          <h4>
+            A game to improve your vexillogical knowledge
+          </h4>
+        </div>
+
+        <Nav
+          flags={rounds.flags}
+          correct={rounds.totalCorrect}
+          userId={null}
+          displayName={'Richard'}
+          handleSignIn={this.handleSignIn}
+          handleSignOut={this.handleSignOut}
+        />
+
+        <main>
+          <div className="messages">
+            {renderCurrentMessage(
+              seconds,
+              stoppedAt,
+              rounds,
+            )}
+          </div>
+
+          <div className="flag">
+            {currentFlag
+              ? <img
+                  src={`flags/${currentFlag.toLowerCase()}.png`}
+                  width="250"
+                  alt="logo"
+                />
+              : <i className="fa fa-flag-o" aria-hidden="true" />}
+          </div>
+
+          {rounds.choices &&
+            <div className="options">
+              <RadioPads
+                options={rounds.choices}
+                handleSelection={this.handleSelection}
+                disabled={stoppedAt !== null}
+              />
+            </div>}
+
+          <div className="controls">
+            <Button
+              type="main"
+              active={seconds > 0 && rounds.active}
+              onClick={this.startRound}
+            >
+              <span>
+                <icon
+                  className={`fa fa-hourglass-${getHourglass(seconds)}`}
+                  aria-hidden="true"
+                />
+                {' '}{!rounds.active || stoppedAt ? 'I\'m ready to play' : '...waiting' }
+              </span>
+            </Button>
+          </div>
+
+        </main>
+      </div>
+    )
+  }
+}
+
+App.propTypes = {
+  countries: PropTypes.object,
+  loading: PropTypes.bool,
+  seconds: PropTypes.number,
+  rounds: PropTypes.object.isRequired,
+  currentFlag: PropTypes.string,
+  stoppedAt: PropTypes.number
+}
+
+const mapStateToProps = state => ({
+  countries: state.api.countries,
+  loading: isLoading('countries')(state),
+  seconds: getSeconds(state),
+  rounds: getRounds(state),
+  currentFlag: getCurrentFlagCode(state),
+  stoppedAt: getStopTime(state)
+})
+
+export default connect(mapStateToProps, {
+  getCountries,
+  startCountdown,
+  initiateRound,
+  chooseFlag
+})(App)
