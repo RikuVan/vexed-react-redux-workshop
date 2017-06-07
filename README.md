@@ -73,6 +73,7 @@ The database is not persistent
   
 ### Resources:
   - [React docs](https://facebook.github.io/react/docs/)
+  - [Ducks architecture](https://github.com/erikras/ducks-modular-redux)
   - [Redux Actions](https://facebook.github.io/react/docs/react-component.html)
   - [React redux](https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options)
   - [Redux with React and connect](http://redux.js.org/docs/basics/UsageWithReact.html)
