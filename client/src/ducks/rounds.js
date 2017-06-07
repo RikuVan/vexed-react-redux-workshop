@@ -1,6 +1,8 @@
-import {take, put, all, call, takeEvery} from 'redux-saga/effects'
+import {take, put, all, call, takeEvery, select} from 'redux-saga/effects'
 import {startCountdown, stopCountdown} from './timer'
 import {getOr} from '../helpers'
+import {AUTH_SUCCESS} from './auth'
+import {request} from './api-requests'
 
 // -----------------------
 //       actions
@@ -8,14 +10,18 @@ import {getOr} from '../helpers'
 
 const INITIATE_ROUND = 'round/INITIATE'
 const INITIALIZE_ROUND = 'round/INITIALIZE'
-const RECORD_ROUND = 'round/RECORD'
+const RECORD_ROUND_SYNC = 'round/RECORD_SYNC'
+const RECORD_ROUND_ASYNC = 'round/RECORD_ASYNC'
 const CHOOSE_FLAG = 'round/CHOOSE_FLAG'
+const RESET_ROUND = 'round/RESET'
 
 // -----------------------
 //   action creators
 // -----------------------
 
-const recordRound = isCorrect => ({type: RECORD_ROUND, isCorrect})
+const recordRoundSync = isCorrect => ({type: RECORD_ROUND_SYNC, isCorrect})
+const recordRoundAsync = (flags, totalCorrect, isCorrect) =>
+  ({type: RECORD_ROUND_ASYNC, flags, totalCorrect, isCorrect})
 export const chooseFlag = data => ({type: CHOOSE_FLAG, ...data})
 const initializeRound = (choices, correctAnswer) => ({
   type: INITIALIZE_ROUND,
@@ -27,6 +33,7 @@ export const initiateRound = (countries, level) => ({
   countries,
   level
 })
+export const resetRound = () => ({type: RESET_ROUND})
 
 // -----------------------
 //        reducer
@@ -38,7 +45,8 @@ const initialState = {
   totalCorrect: 0,
   isCorrect: null,
   level: 'easy',
-  active: false
+  active: false,
+  started: false
 }
 
 export default function reducer(rounds = initialState, action = {}) {
@@ -50,15 +58,35 @@ export default function reducer(rounds = initialState, action = {}) {
         isCorrect: null,
         level: action.level || 'easy',
         choices: action.choices,
-        correctAnswer: action.correctAnswer
+        correctAnswer: action.correctAnswer,
+        started: true
       }
-    case RECORD_ROUND: {
+    case RESET_ROUND: {
+      return initialState
+    }
+    case RECORD_ROUND_SYNC: {
       return {
         ...rounds,
         totalCorrect: action.isCorrect ? rounds.totalCorrect + 1 : rounds.totalCorrect,
-        isCorrect: rounds.isCorrect,
+        isCorrect: action.isCorrect,
         flags: rounds.flags + 1,
         active: false
+      }
+    }
+    case RECORD_ROUND_ASYNC: {
+      return {
+        ...rounds,
+        totalCorrect: action.totalCorrect,
+        isCorrect: action.isCorrect,
+        flags: action.flags,
+        active: false
+      }
+    }
+    case AUTH_SUCCESS: {
+      return {
+        ...rounds,
+        totalCorrect: action.payload.user.totalCorrect,
+        flags: action.payload.user.flags
       }
     }
     default:
@@ -90,8 +118,29 @@ function* watchRounds() {
 
 function* watchResponses() {
   while (true) {
-    const {isCorrect, remaining} = yield take(CHOOSE_FLAG)
-    yield all([ put(stopCountdown(remaining)), put(recordRound(isCorrect)) ])
+    const {isCorrect, remaining, userId} = yield take(CHOOSE_FLAG)
+    yield put(stopCountdown(remaining))
+    if (!userId) {
+      yield put(recordRoundSync(isCorrect))
+    } else {
+      const {totalCorrect, flags} = yield select(getRounds)
+
+      const payload = {
+        flags: flags + 1,
+        totalCorrect: isCorrect ? totalCorrect + 1 : totalCorrect
+      }
+
+      const response = yield call(
+        request,
+        {
+          action: 'patch',
+          resource: `users/${userId}`,
+          endpoint: 'api',
+          payload
+        })
+
+      yield put(recordRoundAsync(response.flags, response.totalCorrect, isCorrect))
+    }
   }
 }
 

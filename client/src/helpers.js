@@ -9,7 +9,7 @@
 // ----------------------------------------------------------
 
 export const getOr = (pathString, alternative, obj) => {
-  let paths = pathString.split('.')
+  const paths = pathString.split('.')
   let val = obj
   let idx = 0
   while (idx < paths.length) {
@@ -21,3 +21,5 @@ export const getOr = (pathString, alternative, obj) => {
   }
   return val == null || val !== val ? alternative : val  // eslint-disable-line no-self-compare
 }
+
+export const pipe = (a, b) => arg => a(b(arg))

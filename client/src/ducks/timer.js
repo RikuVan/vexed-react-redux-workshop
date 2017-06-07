@@ -23,7 +23,7 @@ export const stopCountdown = stoppedAt => ({type: STOP_COUNTDOWN, stoppedAt})
 //        reducer
 // -----------------------
 
-const initialState = {seconds: 10, remaining: null}
+const initialState = {seconds: 10, remaining: null, stoppedAt: null}
 
 export default function reducer(time = initialState, action) {
   switch (action.type) {
@@ -37,7 +37,7 @@ export default function reducer(time = initialState, action) {
     case STOP_COUNTDOWN:
       return {
         seconds: 0,
-        stoppedAt: time.seconds
+        stoppedAt: action.stoppedAt
       }
     default:
       return time
@@ -75,7 +75,7 @@ function* doCountdown({value}) {
 
   try {
     while (true) {
-      let seconds = yield take(chan)
+      const seconds = yield take(chan)
       yield put({type: DECREMENT, value: seconds})
     }
   } finally {

@@ -4,10 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "babel-node server.js",
+    "start": "concurrently \"yarn run server\" \"yarn run client\"",
+    "server": "nodemon server.js",
     "client": "babel-node start-client.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "install:all": "concurrently \"yarn install\" \"cd client && yarn install\""
   },
   "devDependencies": {
     "concurrently": "^3.4.0",
@@ -21,11 +22,13 @@
   "dependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
     "body-parser": "^1.17.2",
     "clone": "^2.1.1",
     "express": "^4.15.3",
     "json-server": "^0.10.1",
     "jwt-simple": "^0.5.1",
-    "moment": "^2.18.1"
+    "moment": "^2.18.1",
+    "nodemon": "^1.11.0"
   }
 }

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {PropTypes} from 'prop-types'
-import './RadioPads.css'
+import './Radio-pads.css'
 
 class RadioPads extends Component {
   state = {selected: ''}
@@ -14,24 +14,24 @@ class RadioPads extends Component {
   render() {
     const {options: opts, disabled} = this.props
     return (
-      <div className="options-wrapper">
+      <div className='options-wrapper'>
         {opts.map((country, key) => {
           const code = Object.keys(country)[0]
           const isCurrent = this.state.selected === code
           return (
-            <div key={key} className="RadioPad">
+            <div key={key} className='Radio-pad'>
               <div>
                 <label
                   className={
                     isCurrent
-                      ? 'RadioPad-wrapper RadioPad-wrapper--selected'
-                      : 'RadioPad-wrapper'
+                      ? 'Radio-pad-wrapper Radio-pad-wrapper--selected'
+                      : 'Radio-pad-wrapper'
                   }
                 >
                   <input
-                    className="RadioPad-radio"
-                    type="radio"
-                    name="countries"
+                    className='Radio-pad-radio'
+                    type='radio'
+                    name='countries'
                     id={code}
                     value={code}
                     onChange={this.handleSelection}
@@ -50,7 +50,8 @@ class RadioPads extends Component {
 
 RadioPads.propTypes = {
   options: PropTypes.array.isRequired,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  handleSelection: PropTypes.func.isRequired
 }
 
 export default RadioPads

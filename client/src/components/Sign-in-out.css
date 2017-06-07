@@ -1,0 +1,22 @@
+.Sign-in-out {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.Sign-in-out-input {
+  flex: 1 0 150px;
+  position: relative;
+  padding: 0.6em;
+  border-radius: 3px;
+  margin-right: 7px;
+  outline: none;
+  border: 1px solid #ddd;
+  font-size: inherit;
+  background: #fff;
+}
+
+.Sign-in-out-input::placeholder {
+  opacity: 0.7;
+}
+

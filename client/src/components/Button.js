@@ -37,7 +37,8 @@ Button.propTypes = {
   className: PropTypes.string,
   htmlType: PropTypes.string,
   type: PropTypes.string,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  active: PropTypes.bool
 }
 
 export default Button

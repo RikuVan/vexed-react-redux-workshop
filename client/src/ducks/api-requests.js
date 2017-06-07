@@ -1,13 +1,13 @@
 import {call, put, takeEvery} from 'redux-saga/effects'
 import axios from 'axios'
-import {updateUser} from './user'
 import {getOr} from '../helpers'
+import {getAuthToken} from './auth'
 
 // -----------------------
 //       actions
 // -----------------------
 
-const FETCH = 'api/FETCH'
+export const FETCH = 'api/FETCH'
 const COMPLETE = 'api/COMPLETE'
 
 // -----------------------
@@ -51,16 +51,19 @@ export const selectCountries = state => getOr('countries', {}, state)
 //        sagas
 // -----------------------
 
-function* request({action, resource, endpoint = 'api'}) {
+export function* request({action, resource = '', endpoint = 'api', payload}) {
   try {
-    const {data} = yield call(apiAction, action, `${endpoint}/${resource}`)
-    if (endpoint === 'login' || resource === 'user') {
-      yield put(updateUser(data))
-    } else {
-      yield put({type: COMPLETE, resource, data})
+    const {data} = yield call(apiAction, action, `${endpoint}/${resource}`, payload)
+
+    if (endpoint === 'login' || endpoint === 'auth') {
+      return data
     }
+
+    yield put({type: COMPLETE, resource, data})
+    return data
   } catch (error) {
-    yield put({type: COMPLETE, error})
+    yield put({type: COMPLETE, resource, error: error})
+    return {error}
   }
 }
 
@@ -74,7 +77,14 @@ export function* watchRequests() {
 
 function apiAction(action, url, payload) {
   if (payload) {
-    return axios[action](url, payload)
+    if (url.includes('login') || url.includes('auth')) {
+      return axios[action](url, payload)
+    }
+    const token = getAuthToken()
+    if (token) {
+      return axios[action](`${url}?token=${token}`, payload)
+    }
+    console.log('missing token')
   }
   return axios[action](url)
 }

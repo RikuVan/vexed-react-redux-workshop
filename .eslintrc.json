@@ -1,6 +1,10 @@
 {
   "extends": ["standard", "eslint-config-standard-react"],
   "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true
+  },
   "rules": {
     "array-bracket-spacing": [2, "always"],
     "jsx-quotes": [1, "prefer-single"],
@@ -10,7 +14,7 @@
     "prefer-const": 1,
     "quote-props": [1, "consistent-as-needed"],
     "react/no-multi-comp": 0,
-    "react/prop-types": 0,
+    "react/prop-types": 1,
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/jsx-indent-props": 0,
     "react/no-array-index-key": 0,

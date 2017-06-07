@@ -1,4 +1,4 @@
-.RadioPad-wrapper {
+.Radio-pad-wrapper {
   border-radius: 3px;
   width: 100%;
   cursor: pointer;
@@ -11,13 +11,13 @@
   text-align: center;
 }
 
-.RadioPad-wrapper:active,
-.RadioPad-wrapper:hover,
-.RadioPad-wrapper--selected {
+.Radio-pad-wrapper:active,
+.Radio-pad-wrapper:hover,
+.Radio-pad-wrapper--selected {
   background: #3B2058
 }
 
-.RadioPad-radio {
+.Radio-pad-radio {
   visibility: hidden;
   height: 0;
   width: 0;

@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import './App.css'
 import {getCountries, isLoading} from './ducks/api-requests'
 import {getSeconds, startCountdown, getStopTime} from './ducks/timer'
+import {authenticate, getUserDisplayName, getUserId} from './ducks/auth'
 import Nav from './components/Nav'
 import Button from './components/Button'
 import {
@@ -12,52 +13,52 @@ import {
   getCurrentFlagCode,
   chooseFlag
 } from './ducks/rounds'
-import RadioPads from './components/RadioPads'
+import RadioPads from './components/Radio-pads'
 
 const renderCurrentMessage = (
   seconds,
   stoppedTime,
   round
 ) => {
-  const {active, isCorrect, flags} = round
-  const showWelcomeMessage = flags === 0 && !active
+  const {active, isCorrect, started} = round
+  const showWelcomeMessage = !started && !active
   const showStartMessage = stoppedTime === null && active
   const showSuccessMessage = stoppedTime > 0 && isCorrect
   const showMistakeMessage = stoppedTime > 0 && !isCorrect
-
   if (showWelcomeMessage) {
     return (
-      <div className="messages-text">
+      <div className='messages-text'>
         Welcome. Ready to get vexed?
       </div>
     )
   }
   if (showStartMessage) {
     return (
-      <div className="messages-text">
+      <div className='messages-text'>
         Time remaining: {seconds}
       </div>
     )
   }
   if (showSuccessMessage) {
     return (
-      <div className="messages-text">
+      <div className='messages-text'>
         Good job! Answered in {10 - stoppedTime} {seconds === 1 ? 'second' : 'seconds'}
       </div>
     )
   }
   if (showMistakeMessage) {
     return (
-      <div className="messages-text">
+      <div className='messages-text'>
         Wrong answer. Keep studying!
       </div>
     )
   }
-  return <div className="messages-text">Oops, time expired</div>
+  return <div className='messages-text'>Oops, time expired</div>
 }
 
 class App extends Component {
   componentDidMount() {
+    this.props.authenticate()
     this.props.getCountries()
   }
 
@@ -67,14 +68,13 @@ class App extends Component {
       this.props.rounds.level
     )
 
-  handleSignIn = () => {}
-  handleSignOut = () => {}
-
-  handleSelection = value =>
+  handleSelection = value => {
     this.props.chooseFlag({
       isCorrect: value === this.props.currentFlag && this.props.seconds > 0,
-      remaining: this.props.seconds
+      remaining: this.props.seconds,
+      userId: this.props.userId
     })
+  }
 
   render() {
     const {
@@ -83,7 +83,8 @@ class App extends Component {
       seconds,
       currentFlag,
       rounds,
-      stoppedAt
+      stoppedAt,
+      displayName
     } = this.props
 
     if (loading || !countries) {
@@ -100,10 +101,10 @@ class App extends Component {
     }
 
     return (
-      <div className="App">
+      <div className='App'>
 
-        <div className="App-header">
-          <i className="fa fa-flag-o" aria-hidden="true" />
+        <div className='App-header'>
+          <i className='fa fa-flag-o' aria-hidden='true' />
           <h1>Vexed</h1>
           <h4>
             A game to improve your vexillogical knowledge
@@ -113,14 +114,11 @@ class App extends Component {
         <Nav
           flags={rounds.flags}
           correct={rounds.totalCorrect}
-          userId={null}
-          displayName={'Richard'}
-          handleSignIn={this.handleSignIn}
-          handleSignOut={this.handleSignOut}
+          displayName={displayName}
         />
 
         <main>
-          <div className="messages">
+          <div className='messages'>
             {renderCurrentMessage(
               seconds,
               stoppedAt,
@@ -128,18 +126,18 @@ class App extends Component {
             )}
           </div>
 
-          <div className="flag">
+          <div className='flag'>
             {currentFlag
               ? <img
                   src={`flags/${currentFlag.toLowerCase()}.png`}
-                  width="250"
-                  alt="logo"
+                  width='250'
+                  alt='logo'
                 />
-              : <i className="fa fa-flag-o" aria-hidden="true" />}
+              : <i className='fa fa-flag-o' aria-hidden='true' />}
           </div>
 
           {rounds.choices &&
-            <div className="options">
+            <div className='options'>
               <RadioPads
                 options={rounds.choices}
                 handleSelection={this.handleSelection}
@@ -147,16 +145,16 @@ class App extends Component {
               />
             </div>}
 
-          <div className="controls">
+          <div className='controls'>
             <Button
-              type="main"
+              type='main'
               active={seconds > 0 && rounds.active}
               onClick={this.startRound}
             >
               <span>
                 <icon
                   className={`fa fa-hourglass-${getHourglass(seconds)}`}
-                  aria-hidden="true"
+                  aria-hidden='true'
                 />
                 {' '}{!rounds.active || stoppedAt ? 'I\'m ready to play' : '...waiting' }
               </span>
@@ -175,7 +173,13 @@ App.propTypes = {
   seconds: PropTypes.number,
   rounds: PropTypes.object.isRequired,
   currentFlag: PropTypes.string,
-  stoppedAt: PropTypes.number
+  stoppedAt: PropTypes.number,
+  authenticate: PropTypes.func.isRequired,
+  getCountries: PropTypes.func.isRequired,
+  initiateRound: PropTypes.func.isRequired,
+  chooseFlag: PropTypes.func.isRequired,
+  displayName: PropTypes.string,
+  userId: PropTypes.number
 }
 
 const mapStateToProps = state => ({
@@ -184,12 +188,15 @@ const mapStateToProps = state => ({
   seconds: getSeconds(state),
   rounds: getRounds(state),
   currentFlag: getCurrentFlagCode(state),
-  stoppedAt: getStopTime(state)
+  stoppedAt: getStopTime(state),
+  displayName: getUserDisplayName(state),
+  userId: getUserId(state)
 })
 
 export default connect(mapStateToProps, {
   getCountries,
   startCountdown,
   initiateRound,
-  chooseFlag
+  chooseFlag,
+  authenticate
 })(App)

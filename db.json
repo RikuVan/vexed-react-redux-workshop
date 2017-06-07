@@ -1,20 +1,33 @@
 {
-  "users": {
-    "rick@gmail.com": {
+  "users": [
+    {
       "id": 1,
-      "displayName": "Rolling kitty",
+      "user": "Grunkle Stan",
+      "username": "stan",
+      "displayName": "Rollingkitty",
       "flags": 10,
-      "correct": 10,
+      "totalCorrect": 1,
       "password": "secret"
     },
-    "mabel@gmail.com": {
-      "id": 1,
-      "displayName": "Mabel",
-      "flags": 100,
-      "correct": 85,
+    {
+      "id": 2,
+      "user": "Mabel Pines",
+      "username": "mabel",
+      "displayName": "Mabelster",
+      "flags": 80,
+      "totalCorrect": 45,
+      "password": "secret"
+    },
+    {
+      "id": 3,
+      "user": "Dipper Pines",
+      "username": "dipper",
+      "displayName": "Vexillogist supreme",
+      "flags": 150,
+      "totalCorrect": 149,
       "password": "secret"
     }
-  },
+  ],
   "countries":{
     "AD": "Andorra",
     "AE": "United Arab Emirates",
