@@ -11,8 +11,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ### Starting the app
 
-- `Yarn run install:all`  concurrently installs dependencies for the client and server--each has its own package.json
-- `Yarn start` concurrently starts the backend node server and the client server, both the client and server will reload when changes are made
+- `yarn run install:all`  concurrently installs dependencies for the client and server--each has its own package.json
+- `yarn start` concurrently starts the backend node server and the client server, both the client and server will reload when changes are made
 
 ### Api
 
