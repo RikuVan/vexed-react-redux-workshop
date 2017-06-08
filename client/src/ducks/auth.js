@@ -158,4 +158,3 @@ function setAuthToken(token) {
 function removeAuthToken() {
   localStorage.removeItem('token')
 }
-

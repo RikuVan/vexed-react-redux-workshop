@@ -5,4 +5,3 @@ import rounds from './ducks/rounds'
 import auth from './ducks/auth'
 
 export default combineReducers({api, timer, rounds, auth})
-

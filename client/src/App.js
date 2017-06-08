@@ -25,35 +25,21 @@ const renderCurrentMessage = (
   const showStartMessage = stoppedTime === null && active
   const showSuccessMessage = stoppedTime > 0 && isCorrect
   const showMistakeMessage = stoppedTime > 0 && !isCorrect
+
+  let message = <span>Oops, time expired</span>
+
   if (showWelcomeMessage) {
-    return (
-      <div className='messages-text'>
-        Welcome. Ready to get vexed?
-      </div>
+    message = <span>Welcome. Ready to get vexed?</span>
+  } else if (showStartMessage) {
+    message = <span>Time remaining: {seconds}</span>
+  } else if (showSuccessMessage) {
+    message = (
+      <span>Good job! Answered in {10 - stoppedTime} {seconds === 1 ? 'second' : 'seconds'}</span>
     )
+  } else if (showMistakeMessage) {
+    message = <span>Wrong answer. Keep studying!</span>
   }
-  if (showStartMessage) {
-    return (
-      <div className='messages-text'>
-        Time remaining: {seconds}
-      </div>
-    )
-  }
-  if (showSuccessMessage) {
-    return (
-      <div className='messages-text'>
-        Good job! Answered in {10 - stoppedTime} {seconds === 1 ? 'second' : 'seconds'}
-      </div>
-    )
-  }
-  if (showMistakeMessage) {
-    return (
-      <div className='messages-text'>
-        Wrong answer. Keep studying!
-      </div>
-    )
-  }
-  return <div className='messages-text'>Oops, time expired</div>
+  return <div className='messages-text'>{message}</div>
 }
 
 class App extends Component {
@@ -156,7 +142,7 @@ class App extends Component {
                   className={`fa fa-hourglass-${getHourglass(seconds)}`}
                   aria-hidden='true'
                 />
-                {' '}{!rounds.active || stoppedAt ? 'I\'m ready to play' : '...waiting' }
+                {' '}{!rounds.active || stoppedAt !== null ? 'I\'m ready to play' : '...waiting' }
               </span>
             </Button>
           </div>

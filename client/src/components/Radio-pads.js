@@ -55,4 +55,3 @@ RadioPads.propTypes = {
 }
 
 export default RadioPads
-

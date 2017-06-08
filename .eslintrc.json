@@ -18,6 +18,8 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/jsx-indent-props": 0,
     "react/no-array-index-key": 0,
-    "space-before-function-paren": [2, {"anonymous": "always", "named": "never"}]
+    "space-before-function-paren": [2, {"anonymous": "always", "named": "never"}],
+    "generator-star-spacing": 0,
+    "comma-dangle": 0
   }
 }
