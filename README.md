@@ -34,6 +34,11 @@ The database is not persistent
 
 ## The workshop
 
+### TIPS
+  * Clone the master branch to get started. But if you get stuck you can checkout the solution branch to peek at one way to do it.
+  * We left a number of components for you since you may not have time to do everything from scratch but you may of course change them or make your own.
+  * A very useful utility for avoiding null exceptions, `getOr` has been provided under `/helpers` to ease in making selectors; however, if you would like more, feel free to yarn install e.g. lodash or ramda.
+
 ### Sprint 1: THE BASIC QUIZ (REACT ONLY!)
   A user wants to see a random country flag and three possible choices of country names. The choices are radio
   buttons and the user can choose once.
