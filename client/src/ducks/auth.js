@@ -1,7 +1,12 @@
 import {race, take, call, put, all} from 'redux-saga/effects'
 import {getOr} from '../helpers'
-import {request} from './api-requests'
-import {resetRound} from './rounds'
+// import {request} from './api-requests'
+// import {resetRound} from './rounds'
+
+// This duck is mostly ready to use.
+// It lacks an action creator to call in order to reset a round, e.g. resetRound
+// It also lacks the method for calling the backend. Either import a generator from api-requests,
+// e.g. request, and give it the needed params or import axios directly
 
 // -----------------------
 //       actions
@@ -76,7 +81,7 @@ export const getUserId = state => getOr('auth.user.id', null, state)
 function* authorize(endpoint, credentialsOrToken) {
   const {response} = yield race({
     response: call(
-      request,
+      //request,
       {
         action: 'post',
         endpoint,
@@ -108,7 +113,7 @@ function* removeAuth(error) {
   yield all([
     put(signOut(error)),
     call(removeAuthToken),
-    put(resetRound())
+    // put(resetRound())
   ])
 }
 
@@ -117,7 +122,7 @@ function* watchSignOut() {
     yield take(SIGN_OUT)
     yield all([
       call(removeAuthToken),
-      put(resetRound())
+      // put(resetRound())
     ])
   }
 }
