@@ -43,38 +43,39 @@ The database is not persistent
   A user wants to see a random country flag and three possible choices of country names. The choices are radio
   buttons and the user can choose once.
   
-  1. You will need to make a request to the backend for the countries in the correct lifecycle hook and save the
+  1. Make a request to the backend for the countries in the correct lifecycle hook and save the
   countries on the state of the component. You will also need to have additional state to handle the choices and correct answer,
   as well as some ui state.
   2. After pressing a button the user should understand that the round is finished as well as her success/failure.
   
 ### Sprint 2: REDUX, REACT-REDUX, AND REDUX-SAGA REFACTOR
-  The user is not satisfied with just React; she has to complicate things. You will need to 'ducks' with actions, action creators,
+  The user is not satisfied with just React; she has to complicate things. She wants 'ducks' with actions, action creators,
   sagas, side-effects, and maybe even selectors: one for api calls/ getting the countries and one for tracking the rounds, ie. the score.
   
-  1. You will need to hook up your reducers and sagas middleware to the redux store and then provide the store to your app.
-  2. Make use of your new fancy store with the help of react-redux connect. You should be able to now move all your state to the store and
-  dispatch actions to your middleware and reducers.
-  3. Your sagas should be listening for actions to be dispatched and update your state as needed. So your app does all the same
-  stuff and is now three times as much code. An improvement...hmmm?
+  1. Hook up your reducers and sagas middleware to the redux store and then provide the store to your app.
+  2. Make use of your fancy store with the help of react-redux `connect`. Move all your component state to the store and
+  dispatch actions to your middleware and reducers instead of handling side-effects inside the component.
+  3. Your sagas `take` actions to be dispatched and `put` new actions and `call` side effects to update your state as needed. 
+  So your app does all the same stuff and is now three times as much code. An improvement...hmmm?
   
 ### Sprint 3: COUNTDOWN TIMER (REDUX-SAGA SHOWS ITS POWER)
   The user thrives on pressure and wants a countdown timer. If she doesn't answer in a give time, she is loses her chance until the next round.
   
   1. Now we can exploit redux sagas ability to handle complex user interactions and asynchronicity. We will need to have some helper
-  functions to tick away seconds and a way to cancel these if the user answers in time.
+  functions/generators to tick away seconds and a way to cancel these if the user answers in time.
   2. We also want to see the result in the UI. You will need to use a number of flag checks in the render method to show just the right message
   to the user. Did time run out? Was the answer right or wrong? How do we tell them to start again?
   
 ### Sprint 4: AUTH AND ASYNC ROUNDS (PROBABLY NO TIME FOR THIS...HOMEWORK?)
   The user wants to log in so he or she can save her performances across sessions.
   
-  1. The backend will provide a jwt to persist in local storage. You will need to hook up the login form in the nav and
-  send off the username and password to get this jwt back. We can then hit the /auth endpoint on refreshes of the app.
+  1. The backend will provide a jwt to persist in local storage (or at least in the store). You will need to hook up the login form in the nav and
+  send off the username and password to get this jwt back. We can then hit the `/auth` endpoint on refreshes of the app.
   Then you need to figure out how to handle logging out and showing all of this in the UI...yeah this is getting onerous.
-  2. Finally, we would want to send our tries and successful attempts to the backend to persist instead of just directly updating the reducer, 
-  patching the user data and then sending the data on to our reducer. We probably only want to allow this if the token is passed along as a query param.
-  3. Well if you get this far, don't you have something better to do!
+  2. Finally, we would want to send our count of attempts--successful and total--to the backend to persist instead of just directly updating the reducer, 
+  patching the user data and sending the updated data on to our reducer, if the request is successful.
+  We probably only want to allow this if the token is passed along as a query param.
+  3. Well if you get this far, well done!
   
 ### Resources:
   - [React docs](https://facebook.github.io/react/docs/)
