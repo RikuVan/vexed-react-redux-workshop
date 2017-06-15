@@ -78,6 +78,7 @@ The database is not persistent
   3. Well if you get this far, well done!
   
 ### Resources:
+  - [Workshop slides](https://rikuvan.github.io/vexed/)
   - [React docs](https://facebook.github.io/react/docs/)
   - [Ducks architecture](https://github.com/erikras/ducks-modular-redux)
   - [Redux Actions](https://facebook.github.io/react/docs/react-component.html)
