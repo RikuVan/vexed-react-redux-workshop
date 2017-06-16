@@ -78,6 +78,7 @@ class App extends Component {
 
         <main>
           <h3>{statusTexts[this.props.round.answerStatus]}</h3>
+          <h3>Score: {this.props.round.score}</h3>
           {
             this.props.round.correctAnswer
               ? <img src={'flags/' + this.props.round.correctAnswer + '.png'} alt='country flag' />

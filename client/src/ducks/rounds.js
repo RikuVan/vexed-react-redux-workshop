@@ -17,7 +17,8 @@ const defaultRound = {
   choices: [],
   correctAnswer: '',
   answerStatus: 'waiting',
-  hasEnded: false
+  hasEnded: false,
+  score: 0
 }
 
 export const round = (state = defaultRound, action) => {
@@ -25,13 +26,16 @@ export const round = (state = defaultRound, action) => {
     case INITIALIZE:
       return {
         ...defaultRound,
-        ...getChoices(action.countryList)
+        ...getChoices(action.countryList),
+        score: state.score
       }
     case CHOOSE_ANSWER:
       const answerStatus = (action.choice === state.correctAnswer) ? 'success' : 'failure'
+      const score = state.score + (answerStatus === 'success' ? 1 : 0)
       return {
         ...state,
         hasEnded: true,
+        score,
         answerStatus
       }
     default:
