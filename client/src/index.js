@@ -5,22 +5,23 @@ import './index.css'
 import registerServiceWorker from './registerServiceWorker'
 import {applyMiddleware, compose, createStore} from 'redux'
 import {Provider} from 'react-redux'
-// import createSagaMiddleware from 'redux-saga'
+import reducer from './reducer'
+import createSagaMiddleware from 'redux-saga'
 // import reducer from './reducer.js'
 
-// import rootSaga from './sagas'
+import rootSaga from './sagas'
 
-// const sagaMiddleware = createSagaMiddleware()
-const middleware = [ /* add SagaMiddleware here */ ]
+const sagaMiddleware = createSagaMiddleware()
+const middleware = [ sagaMiddleware ]
 const enhancers = []
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
 const store = createStore(
-  () => {}, // add reducer here
+  reducer,
   composeEnhancers(applyMiddleware(...middleware), ...enhancers),
 )
 
-// sagaMiddleware.run(rootSaga)
+sagaMiddleware.run(rootSaga)
 
 ReactDOM.render(
   <Provider store={store}>

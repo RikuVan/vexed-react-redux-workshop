@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
 import './App.css'
-import {apiAction} from './ducks/api-requests.js'
-import {getChoices} from './ducks/rounds.js'
+import {fetchCountries} from './ducks/api-requests.js'
+import {initialize, chooseAnswer} from './ducks/rounds'
 import RadioPads from './components/Radio-pads.js'
 import Button from './components/Button.js'
+import {connect} from 'react-redux'
 
 // this is a little helper you can use if you like, or erase and make your own
 const renderCurrentMessage = (  // eslint-disable-line no-unused-vars
@@ -38,8 +39,7 @@ const initialState = {
   correctAnswer: '',
   answerStatus: 'waiting',
   roundHasEnded: false,
-  countryList: [],
-  // timer: 5
+  countryList: []
 }
 
 const statusTexts = {
@@ -52,38 +52,15 @@ class App extends Component {
   state = initialState
 
   handleCountryChoice = (choice) => {
-    this.setState({
-      answerStatus: (choice === this.state.correctAnswer) ? 'success' : 'failure',
-      roundHasEnded: true
-    })
+    this.props.chooseAnswer(choice)
   }
 
-  // handleTimerUpdate = () => {
-  //   let currentTime = this.state.timer
-  //   if(currentTime >)
-  //   this.setState({
-  //     timer: this.state.timer - 1
-  //   })
-  // }
-
-  resetRound = () => {
-    this.setState({
-      ...getChoices(this.state.countryList),
-      answerStatus: 'waiting',
-      roundHasEnded: false
-    })
+  handleResetRound = () => {
+    this.props.initialize(this.props.api.data)
   }
 
   componentDidMount() {
-    const countriesPromise = apiAction('get', 'api/countries')
-    countriesPromise.then(response => {
-      const newState = {
-        ...getChoices(response.data),
-        countryList: response.data
-      }
-      this.setState(newState)
-      console.log(this)
-    })
+    this.props.fetchCountries()
   }
   render() {
     return (
@@ -100,20 +77,23 @@ class App extends Component {
         <nav><h4 style={{color: '#fff'}}>Cool nav bar here</h4></nav>
 
         <main>
-          <h3>{statusTexts[this.state.answerStatus]}</h3>
+          <h3>{statusTexts[this.props.round.answerStatus]}</h3>
           {
-            this.state.correctAnswer
-              ? <img src={'flags/' + this.state.correctAnswer + '.png'} alt='country flag' />
+            this.props.round.correctAnswer
+              ? <img src={'flags/' + this.props.round.correctAnswer + '.png'} alt='country flag' />
               : null
           }
           <div className='controls'>
-            <RadioPads options={this.state.choices}
+            <RadioPads options={this.props.round.choices}
               handleSelection={this.handleCountryChoice}
-              disabled={this.state.roundHasEnded} />
+              disabled={this.props.round.hasEnded} />
           </div>
           <div className='controls'>
-            {this.state.roundHasEnded ? <Button onClick={this.resetRound}>
-            New Round</Button> : null}
+            {
+              this.props.round.hasEnded
+              ? <Button onClick={this.handleResetRound}>New Round</Button>
+              : null
+            }
           </div>
         </main>
       </div>
@@ -123,4 +103,9 @@ class App extends Component {
 
 App.propTypes = {}
 
-export default App
+const mapStateToProps = state => ({
+  round: state.round,
+  api: state.api
+})
+
+export default connect(mapStateToProps, {fetchCountries, chooseAnswer, initialize})(App)

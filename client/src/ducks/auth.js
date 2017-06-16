@@ -64,7 +64,6 @@ export default function reducer(userState = defaultUser, action) {
 // -----------------------
 //        selectors
 // -----------------------
-
 export const getUser = state => getOr('auth.user', null, state)
 export const isLoadingUser = state => getOr('auth.loading', null, state)
 export const getUserDisplayName = state => getOr('auth.user.displayName', null, state)

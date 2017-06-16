@@ -1,18 +1,51 @@
 // -----------------------
 //       actions
 // -----------------------
+const INITIALIZE = 'INITIALIZE'
+const CHOOSE_ANSWER = 'CHOOSE_ANSWER'
 
 // -----------------------
 //   action creators
 // -----------------------
+export const initialize = countryList => ({type: INITIALIZE, countryList})
+export const chooseAnswer = choice => ({type: CHOOSE_ANSWER, choice})
 
 // -----------------------
 //        reducer
 // -----------------------
+const defaultRound = {
+  choices: [],
+  correctAnswer: '',
+  answerStatus: 'waiting',
+  hasEnded: false
+}
+
+export const round = (state = defaultRound, action) => {
+  switch (action.type) {
+    case INITIALIZE:
+      return {
+        ...defaultRound,
+        ...getChoices(action.countryList)
+      }
+    case CHOOSE_ANSWER:
+      const answerStatus = (action.choice === state.correctAnswer) ? 'success' : 'failure'
+      return {
+        ...state,
+        hasEnded: true,
+        answerStatus
+      }
+    default:
+      return state
+  }
+}
 
 // -----------------------
 //        selectors
 // -----------------------
+// export const getChoices = state => getOr('round.choices', [], state)
+// export const getCorrectAnswer = state => getOr('round.correctAnswer', '', state)
+// export const getAnswerStatus = state => getOr('round.answerStatus', 'waiting', state)
+// export const hasEnded = state => getOr('round.hasEnded', false, state)
 
 // -----------------------
 //        sagas
