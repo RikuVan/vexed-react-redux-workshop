@@ -17,6 +17,10 @@
   background: #3B2058
 }
 
+.Radio-pad-wrapper--disabled {
+  background: lightgray;
+}
+
 .Radio-pad-radio {
   visibility: hidden;
   height: 0;
@@ -34,4 +38,5 @@ label {
   display: flex;
   align-items: stretch;
   justify-content: center;
+  height: 4em;
 }

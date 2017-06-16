@@ -18,15 +18,18 @@ class RadioPads extends Component {
         {opts.map((country, key) => {
           const code = Object.keys(country)[0]
           const isCurrent = this.state.selected === code
+          let classes = ['Radio-pad-wrapper'];
+          if (isCurrent) {
+            classes.push('Radio-pad-wrapper--selected');
+          }
+          if (disabled) {
+            classes.push('Radio-pad-wrapper--disabled');
+          }
           return (
             <div key={key} className='Radio-pad'>
               <div>
                 <label
-                  className={
-                    isCurrent
-                      ? 'Radio-pad-wrapper Radio-pad-wrapper--selected'
-                      : 'Radio-pad-wrapper'
-                  }
+                  className={classes.join(' ')}
                 >
                   <input
                     className='Radio-pad-radio'

@@ -1,7 +1,11 @@
 import React, {Component} from 'react'
+import {connect} from 'react-redux';
 import './App.css'
 import RadioPads from './components/Radio-pads'
-import {apiAction} from './ducks/api-requests'
+import Button from './components/Button';
+import {apiGet} from './ducks/api-requests'
+import {getRoundChoices, getRound, startRound, getFlagUrl, selectAnswer} from './ducks/rounds'
+import {getSeconds} from './ducks/timer'
 
 // this is a little helper you can use if you like, or erase and make your own
 const renderCurrentMessage = (  // eslint-disable-line no-unused-vars
@@ -32,33 +36,21 @@ const renderCurrentMessage = (  // eslint-disable-line no-unused-vars
 }
 
 class App extends Component {
-  state = {countries: [], choices: null, currentIndex: null}
+  // state = {countries: [], choices: null, currentIndex: null, round: {started: false}}
 
   componentDidMount() {
-    apiAction('get', '/api/countries').then(resp => {
-      const keys = Object.keys(resp.data);
-      const indexes = [];
-      while (indexes.length < 3) {
-        const randomIndex = Math.floor(Math.random() * keys.length);
-        if (!indexes.includes(randomIndex)) {
-          indexes.push(randomIndex);
-        }
-      }
-      const rand = Math.floor(Math.random() * 3);
-      this.setState({
-        countries: resp.data,
-        randomOne: keys[indexes[rand]],
-        choices: indexes.map(x => ({[keys[x]]: resp.data[keys[x]]})),
-      })
-    })
+    this.props.apiGet('countries', '/api/countries');
   }
 
   handleSelection = selected => {
-    console.log(selected);
+    this.props.selectAnswer(selected)
+  }
+
+  startRound = () => {
+    this.props.startRound();
   }
 
   render() {
-    console.log(this.state.choices);
     return (
       <div className='App'>
 
@@ -73,9 +65,19 @@ class App extends Component {
         <nav><h4 style={{color: '#fff'}}>Cool nav bar here</h4></nav>
 
         <main>
-          <h3>Please make me</h3>
-          {this.state.randomOne && <img src={`//localhost:3001/flags/${this.state.randomOne.toLowerCase()}.png`} />}
-          {this.state.choices && <RadioPads options={this.state.choices} handleSelection={this.handleSelection} />}
+          {renderCurrentMessage(this.props.seconds, this.props.round.stoppedTime, this.props.round)}
+          <div className="flag">
+            {this.props.choices &&
+              <img src={this.props.flagUrl} />}
+          </div>
+          <div style={{marginTop: '2em'}}>
+            {this.props.choices &&
+              <RadioPads options={this.props.choices} handleSelection={this.handleSelection}
+                disabled={!this.props.round.active} />}
+          </div>
+          <div>
+            {!this.props.round.active && <Button onClick={this.startRound}>Start</Button>}
+          </div>
         </main>
       </div>
     )
@@ -84,4 +86,11 @@ class App extends Component {
 
 App.propTypes = {}
 
-export default App
+const mapStateToProps = state => ({
+  choices: getRoundChoices(state),
+  seconds: getSeconds(state),
+  round: getRound(state),
+  flagUrl: getFlagUrl(state),
+})
+
+export default connect(mapStateToProps, {apiGet, startRound, selectAnswer})(App)
