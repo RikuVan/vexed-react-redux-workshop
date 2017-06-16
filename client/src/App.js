@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import './App.css'
 import {fetchCountries} from './ducks/api-requests.js'
-import {initialize, chooseAnswer} from './ducks/rounds'
+import {initialize, chooseAnswer, startTimer} from './ducks/rounds'
 import RadioPads from './components/Radio-pads.js'
 import Button from './components/Button.js'
 import {connect} from 'react-redux'
@@ -45,7 +45,8 @@ const initialState = {
 const statusTexts = {
   waiting: 'Select the correct country for the flag',
   success: 'Correct! :)',
-  failure: 'You suck!'
+  failure: 'You suck!',
+  timeOut: 'Time out!!'
 }
 
 class App extends Component {
@@ -57,6 +58,7 @@ class App extends Component {
 
   handleResetRound = () => {
     this.props.initialize(this.props.api.data)
+    this.props.startTimer()
   }
 
   componentDidMount() {
@@ -79,6 +81,7 @@ class App extends Component {
         <main>
           <h3>{statusTexts[this.props.round.answerStatus]}</h3>
           <h3>Score: {this.props.round.score}</h3>
+          <h3>Time: {this.props.round.timeLeft}</h3>
           {
             this.props.round.correctAnswer
               ? <img src={'flags/' + this.props.round.correctAnswer + '.png'} alt='country flag' />
@@ -109,4 +112,4 @@ const mapStateToProps = state => ({
   api: state.api
 })
 
-export default connect(mapStateToProps, {fetchCountries, chooseAnswer, initialize})(App)
+export default connect(mapStateToProps, {fetchCountries, chooseAnswer, initialize, startTimer})(App)

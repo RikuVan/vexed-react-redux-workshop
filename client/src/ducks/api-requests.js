@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {getOr} from '../helpers.js'
 import {call, put, takeEvery} from 'redux-saga/effects'
-import {initialize} from './rounds'
+import {initialize, startTimer} from './rounds'
 
 // -----------------------
 //       actions
@@ -53,6 +53,7 @@ function* fetch() {
   try {
     yield put(fetchSuccess(response.data))
     yield put(initialize(response.data))
+    yield put(startTimer())
   } catch (err) {
     yield put(fetchFailure(err))
   }
