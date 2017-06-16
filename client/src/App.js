@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import './App.css'
+import RadioPads from './components/Radio-pads'
+import {apiAction} from './ducks/api-requests'
 
 // this is a little helper you can use if you like, or erase and make your own
 const renderCurrentMessage = (  // eslint-disable-line no-unused-vars
@@ -30,7 +32,33 @@ const renderCurrentMessage = (  // eslint-disable-line no-unused-vars
 }
 
 class App extends Component {
+  state = {countries: [], choices: null, currentIndex: null}
+
+  componentDidMount() {
+    apiAction('get', '/api/countries').then(resp => {
+      const keys = Object.keys(resp.data);
+      const indexes = [];
+      while (indexes.length < 3) {
+        const randomIndex = Math.floor(Math.random() * keys.length);
+        if (!indexes.includes(randomIndex)) {
+          indexes.push(randomIndex);
+        }
+      }
+      const rand = Math.floor(Math.random() * 3);
+      this.setState({
+        countries: resp.data,
+        randomOne: keys[indexes[rand]],
+        choices: indexes.map(x => ({[keys[x]]: resp.data[keys[x]]})),
+      })
+    })
+  }
+
+  handleSelection = selected => {
+    console.log(selected);
+  }
+
   render() {
+    console.log(this.state.choices);
     return (
       <div className='App'>
 
@@ -46,6 +74,8 @@ class App extends Component {
 
         <main>
           <h3>Please make me</h3>
+          {this.state.randomOne && <img src={`//localhost:3001/flags/${this.state.randomOne.toLowerCase()}.png`} />}
+          {this.state.choices && <RadioPads options={this.state.choices} handleSelection={this.handleSelection} />}
         </main>
       </div>
     )

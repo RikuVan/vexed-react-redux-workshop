@@ -27,7 +27,7 @@ import axios from 'axios'
 // feel free to make this in a different way.
 // But you probably want to isolate your api calls in a helper
 
-function apiAction(action, url, payload) { // eslint-disable-line no-unused-vars
+export function apiAction(action, url, payload) { // eslint-disable-line no-unused-vars
   if (payload) {
     if (url.includes('login') || url.includes('auth')) {
       return axios[action](url, payload)

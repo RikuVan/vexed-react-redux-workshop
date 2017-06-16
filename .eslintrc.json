@@ -6,7 +6,7 @@
     "node": true
   },
   "rules": {
-    "array-bracket-spacing": [2, "always"],
+    "array-bracket-spacing": 0,
     "jsx-quotes": [1, "prefer-single"],
     "max-len": ["error", { "code": 100, "ignoreTrailingComments": true }],
     "no-use-before-define": [2, "nofunc"],
@@ -20,6 +20,7 @@
     "react/no-array-index-key": 0,
     "space-before-function-paren": [2, {"anonymous": "always", "named": "never"}],
     "generator-star-spacing": 0,
-    "comma-dangle": 0
+    "comma-dangle": 0,
+    "semi": 0
   }
 }
