@@ -6,21 +6,21 @@ import registerServiceWorker from './registerServiceWorker'
 import {applyMiddleware, compose, createStore} from 'redux'
 import {Provider} from 'react-redux'
 // import createSagaMiddleware from 'redux-saga'
-// import reducer from './reducer.js'
+import reducer from './reducer.js'
 
 // import rootSaga from './sagas'
 
 // const sagaMiddleware = createSagaMiddleware()
-const middleware = [ /* add SagaMiddleware here */ ]
+import {sagaMiddleware,rootSaga} from './ducks/rounds.js'
+const middleware = [ sagaMiddleware]
 const enhancers = []
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
-const store = createStore(
-  () => {}, // add reducer here
+const store = createStore( reducer,
   composeEnhancers(applyMiddleware(...middleware), ...enhancers),
 )
 
-// sagaMiddleware.run(rootSaga)
+ sagaMiddleware.run(rootSaga)
 
 ReactDOM.render(
   <Provider store={store}>

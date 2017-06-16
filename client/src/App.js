@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
 import './App.css'
 import {apiAction} from './ducks/api-requests.js'
-import {getChoices} from './ducks/rounds.js'
+import {getChoices,addSelection,addWin} from './ducks/rounds.js'
 import RadioPads from './components/Radio-pads.js'
 import Button from './components/Button.js'
+import {connect} from 'react-redux'
 
 // this is a little helper you can use if you like, or erase and make your own
 const renderCurrentMessage = (  // eslint-disable-line no-unused-vars
@@ -67,6 +68,10 @@ class App extends Component {
   // }
 
   resetRound = () => {
+    this.props.addSelection(this.state.answerStatus=='success')
+  //  if(this.state.answerStatus=='success'){
+  //    this.props.addWin();
+  //  }
     this.setState({
       ...getChoices(this.state.countryList),
       answerStatus: 'waiting',
@@ -101,6 +106,9 @@ class App extends Component {
 
         <main>
           <h3>{statusTexts[this.state.answerStatus]}</h3>
+          <div>Rounds played. {this.props.rounds.rounds}<br/>
+          Right answers: {this.props.rounds.correct}
+          </div>
           {
             this.state.correctAnswer
               ? <img src={'flags/' + this.state.correctAnswer + '.png'} alt='country flag' />
@@ -123,4 +131,8 @@ class App extends Component {
 
 App.propTypes = {}
 
-export default App
+const mapStateToProps = state => ({
+  rounds: state.rounds
+})
+
+export default connect (mapStateToProps,{addSelection,addWin})(App)
