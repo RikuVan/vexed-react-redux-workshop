@@ -33,7 +33,7 @@ const getRandomCountry = countries => {
 const getCorrectAnswer = choices =>
   Object.keys(choices[getRandomNum(choices.length)])[0]
 
-function getChoices(countries, level) {   // eslint-disable-line no-unused-vars
+export function getChoices(countries, level) {   // eslint-disable-line no-unused-vars
   let numberOfChoices = level === 'hard' ? 5 : 3
   const choices = []
   const codes = []

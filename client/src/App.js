@@ -1,5 +1,9 @@
 import React, {Component} from 'react'
 import './App.css'
+import {apiAction} from './ducks/api-requests.js'
+import {getChoices} from './ducks/rounds.js'
+import RadioPads from './components/Radio-pads.js'
+import Button from './components/Button.js'
 
 // this is a little helper you can use if you like, or erase and make your own
 const renderCurrentMessage = (  // eslint-disable-line no-unused-vars
@@ -29,7 +33,58 @@ const renderCurrentMessage = (  // eslint-disable-line no-unused-vars
   return <div className='messages-text'>{message}</div>
 }
 
+const initialState = {
+  choices: [],
+  correctAnswer: '',
+  answerStatus: 'waiting',
+  roundHasEnded: false,
+  countryList: [],
+  // timer: 5
+}
+
+const statusTexts = {
+  waiting: 'Select the correct country for the flag',
+  success: 'Correct! :)',
+  failure: 'You suck!'
+}
+
 class App extends Component {
+  state = initialState
+
+  handleCountryChoice = (choice) => {
+    this.setState({
+      answerStatus: (choice === this.state.correctAnswer) ? 'success' : 'failure',
+      roundHasEnded: true
+    })
+  }
+
+  // handleTimerUpdate = () => {
+  //   let currentTime = this.state.timer
+  //   if(currentTime >)
+  //   this.setState({
+  //     timer: this.state.timer - 1
+  //   })
+  // }
+
+  resetRound = () => {
+    this.setState({
+      ...getChoices(this.state.countryList),
+      answerStatus: 'waiting',
+      roundHasEnded: false
+    })
+  }
+
+  componentDidMount() {
+    const countriesPromise = apiAction('get', 'api/countries')
+    countriesPromise.then(response => {
+      const newState = {
+        ...getChoices(response.data),
+        countryList: response.data
+      }
+      this.setState(newState)
+      console.log(this)
+    })
+  }
   render() {
     return (
       <div className='App'>
@@ -45,7 +100,21 @@ class App extends Component {
         <nav><h4 style={{color: '#fff'}}>Cool nav bar here</h4></nav>
 
         <main>
-          <h3>Please make me</h3>
+          <h3>{statusTexts[this.state.answerStatus]}</h3>
+          {
+            this.state.correctAnswer
+              ? <img src={'flags/' + this.state.correctAnswer + '.png'} alt='country flag' />
+              : null
+          }
+          <div className='controls'>
+            <RadioPads options={this.state.choices}
+              handleSelection={this.handleCountryChoice}
+              disabled={this.state.roundHasEnded} />
+          </div>
+          <div className='controls'>
+            {this.state.roundHasEnded ? <Button onClick={this.resetRound}>
+            New Round</Button> : null}
+          </div>
         </main>
       </div>
     )
