@@ -22,7 +22,7 @@ All requests from the client (port 3000) are proxied to the backend (port 3001)
 
 `/api/users/{:id}` returns users and you can perform the usual crud operations (make sure the authorization check is disabled in server.js)
 
-`/pictures/` serves pngs of each flag, with the names corresponding to the country codes lowercased, e.g. fi.png
+`/flags/` serves pngs of each flag, with the names corresponding to the country codes lowercased, e.g. fi.png
 
 You probably won't have time to use them but there is also auth endpoints
 
